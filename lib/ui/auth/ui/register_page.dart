@@ -7,20 +7,38 @@ import 'package:maan1/ui/auth/ui/widgets/custom_dropdown_button.dart';
 import 'package:maan1/ui/auth/ui/widgets/custom_textfield.dart';
 import 'package:maan1/widgets/custom_button.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
+  @override
+  _RegisterPageState createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
   String email;
+
   String password;
+
   String userName;
+
   Gender gender;
+
   String phoneNumber;
+
   String city;
+
   String country;
+
   saveEmail(v) => this.email = v;
+
   savePassword(v) => this.password = v;
+
   saveUserName(v) => this.userName = v;
+
   saveGender(v) => this.gender = v;
+
   savePhone(v) => this.phoneNumber = v;
+
   saveCountry(v) => this.country = v;
+
   saveCity(v) => this.city = v;
 
   nullValidate(String v) {
@@ -40,11 +58,12 @@ class RegisterPage extends StatelessWidget {
           phoneNumber: phoneNumber,
           city: city,
           country: country);
-      AuthHelper.authHelper.signup(registerRequest);
+      AuthHelper.authHelper.signup(registerRequest, context);
     }
   }
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build

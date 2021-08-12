@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:maan1/ui/auth/data/firestore_helper.dart';
@@ -8,15 +10,20 @@ class AuthHelper {
   AuthHelper._();
   static AuthHelper authHelper = AuthHelper._();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  signup(RegisterRequest registerRequest) async {
+  signup(RegisterRequest registerRequest, context) async {
     try {
       UserCredential userCredential =
           await firebaseAuth.createUserWithEmailAndPassword(
               email: registerRequest.email, password: registerRequest.password);
       String id = userCredential.user.uid;
       registerRequest.id = id;
-      verifyEmail(registerRequest.email);
-      FirestoreHelper.firestoreHelper.saveUserInFirestore(registerRequest);
+
+      await FirestoreHelper.firestoreHelper
+          .saveUserInFirestore(registerRequest);
+      await verifyEmail(registerRequest.email);
+      logout();
+      CustomDialoug.customDialoug.showCustomDialoug(context, 'Success',
+          'Averification Email has been sent, please verify your email before logging');
     } on Exception catch (e) {
       print(e);
     }
@@ -26,6 +33,11 @@ class AuthHelper {
     try {
       UserCredential userCredential = await firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
+      if (!userCredential.user.emailVerified) {
+        throw Exception('You have to verify your Email');
+      }
+      // assert(
+      //     userCredential.user.emailVerified, 'You have to verify your Email');
 
       FirestoreHelper.firestoreHelper
           .getUserFromFirestore(userCredential.user.uid);
@@ -37,8 +49,9 @@ class AuthHelper {
         CustomDialoug.customDialoug.showCustomDialoug(
             context, 'Error', 'Wrong password provided for that user.');
       }
-    } on Exception catch (e) {
-      print(e);
+    } catch (e) {
+      CustomDialoug.customDialoug
+          .showCustomDialoug(context, 'Error', e.toString());
     }
   }
 

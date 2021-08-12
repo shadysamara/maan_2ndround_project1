@@ -35,6 +35,10 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  verifyEmail() {
+    AuthHelper.authHelper.verifyEmail(email);
+  }
+
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
@@ -59,7 +63,9 @@ class _LoginPageState extends State<LoginPage> {
                 save: savePassword,
                 validate: nullValidate,
               ),
-              CustomButton(title: 'Login', function: login)
+              CustomButton(title: 'Login', function: login),
+              CustomButton(
+                  title: 'Send Verification Code Again', function: verifyEmail)
             ],
           ),
         ),
