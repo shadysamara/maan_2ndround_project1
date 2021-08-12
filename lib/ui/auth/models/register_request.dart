@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 enum Gender { male, female }
 
 class RegisterRequest {
+  String id;
   String email;
   String password;
   String userName;
@@ -21,6 +22,7 @@ class RegisterRequest {
   });
   toMap() {
     return {
+      'id': this.id,
       'email': this.email,
       'phone': this.phoneNumber,
       'userName': this.userName,
