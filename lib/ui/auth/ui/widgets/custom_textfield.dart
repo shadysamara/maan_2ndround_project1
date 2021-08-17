@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:maan1/ui/auth/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class CustomTextfeild extends StatelessWidget {
   String label;
-  Function validate;
-  Function save;
+
+  TextEditingController controller;
+
   bool isHidden;
   TextInputType textInputType;
   CustomTextfeild(
       {this.label,
-      this.save,
-      this.validate,
+      this.controller,
       this.textInputType = TextInputType.text,
       this.isHidden = false});
   @override
@@ -20,8 +22,9 @@ class CustomTextfeild extends StatelessWidget {
       child: TextFormField(
         obscureText: isHidden,
         keyboardType: textInputType,
-        onSaved: (v) => save(v),
-        validator: (v) => validate(v),
+        controller: this.controller,
+        validator: (v) =>
+            Provider.of<AuthProvider>(context, listen: false).nullValidate(v),
         decoration: InputDecoration(
             labelText: label,
             border:

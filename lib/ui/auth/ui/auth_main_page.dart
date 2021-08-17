@@ -3,6 +3,7 @@ import 'package:maan1/ui/auth/ui/login_page.dart';
 import 'package:maan1/ui/auth/ui/register_page.dart';
 
 class AuthMainPage extends StatelessWidget {
+  static final routeName = 'authMainPage';
   @override
   Widget build(BuildContext context) {
     // TODO: implement build

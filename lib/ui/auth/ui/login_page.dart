@@ -5,6 +5,7 @@ import 'package:maan1/ui/auth/data/firestore_helper.dart';
 import 'package:maan1/ui/auth/models/register_request.dart';
 import 'package:maan1/ui/auth/ui/widgets/custom_dropdown_button.dart';
 import 'package:maan1/ui/auth/ui/widgets/custom_textfield.dart';
+import 'package:maan1/ui/chat/data/data_firestore_helper.dart';
 import 'package:maan1/widgets/custom_button.dart';
 
 class LoginPage extends StatefulWidget {
@@ -31,12 +32,13 @@ class _LoginPageState extends State<LoginPage> {
     if (formKey.currentState.validate()) {
       formKey.currentState.save();
 
-      AuthHelper.authHelper.login(email, password, context);
+      AuthHelper.authHelper.login(email, password);
     }
   }
 
   verifyEmail() {
-    AuthHelper.authHelper.verifyEmail(email);
+    DataFirestoreHelper.dataFirestoreHelper.getAllUsers();
+    // AuthHelper.authHelper.verifyEmail(email);
   }
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -53,15 +55,11 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               CustomTextfeild(
                 label: 'Email',
-                save: saveEmail,
                 textInputType: TextInputType.emailAddress,
-                validate: nullValidate,
               ),
               CustomTextfeild(
                 label: 'Password',
                 isHidden: true,
-                save: savePassword,
-                validate: nullValidate,
               ),
               CustomButton(title: 'Login', function: login),
               CustomButton(

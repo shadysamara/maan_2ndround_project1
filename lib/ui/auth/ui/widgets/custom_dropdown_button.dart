@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:maan1/ui/auth/data/auth_helper.dart';
 import 'package:maan1/ui/auth/models/register_request.dart';
+import 'package:maan1/ui/auth/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
-class CustomDropDownButton extends StatefulWidget {
-  Function saveFun;
-  CustomDropDownButton({this.saveFun});
-  @override
-  _CustomDropDownButtonState createState() => _CustomDropDownButtonState();
-}
-
-class _CustomDropDownButtonState extends State<CustomDropDownButton> {
-  // Set<String> genders = {'male', 'female'};
-  Gender value = Gender.male;
+class CustomDropDownButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -23,11 +17,9 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
       child: DropdownButton<Gender>(
           isExpanded: true,
           underline: Container(),
-          value: this.value,
+          value: Provider.of<AuthProvider>(context).selectedGender,
           onChanged: (e) {
-            this.value = e;
-            widget.saveFun(e);
-            setState(() {});
+            Provider.of<AuthProvider>(context, listen: false).saveGender(e);
           },
           items: Gender.values.map((e) {
             return DropdownMenuItem<Gender>(
