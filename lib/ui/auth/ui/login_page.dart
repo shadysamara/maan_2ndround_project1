@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:maan1/ui/auth/data/auth_helper.dart';
 import 'package:maan1/ui/auth/data/firestore_helper.dart';
 import 'package:maan1/ui/auth/models/register_request.dart';
+import 'package:maan1/ui/auth/providers/auth_provider.dart';
 import 'package:maan1/ui/auth/ui/widgets/custom_dropdown_button.dart';
 import 'package:maan1/ui/auth/ui/widgets/custom_textfield.dart';
 import 'package:maan1/ui/chat/data/data_firestore_helper.dart';
 import 'package:maan1/widgets/custom_button.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,60 +16,36 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String email;
-
-  String password;
-
-  saveEmail(v) => this.email = v;
-
-  savePassword(v) => this.password = v;
-
-  nullValidate(String v) {
-    if (v == null || v.length == 0) {
-      return 'Required Field';
-    }
-  }
-
-  login() {
-    if (formKey.currentState.validate()) {
-      formKey.currentState.save();
-
-      AuthHelper.authHelper.login(email, password);
-    }
-  }
-
-  verifyEmail() {
-    DataFirestoreHelper.dataFirestoreHelper.getAllUsers();
-    // AuthHelper.authHelper.verifyEmail(email);
-  }
-
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Form(
-      key: formKey,
-      child: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CustomTextfeild(
-                label: 'Email',
-                textInputType: TextInputType.emailAddress,
-              ),
-              CustomTextfeild(
-                label: 'Password',
-                isHidden: true,
-              ),
-              CustomButton(title: 'Login', function: login),
-              CustomButton(
-                  title: 'Send Verification Code Again', function: verifyEmail)
-            ],
+    return Consumer<AuthProvider>(builder: (context, provider, x) {
+      return Form(
+        key: provider.loginKey,
+        child: SingleChildScrollView(
+          child: Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomTextfeild(
+                  label: 'Email',
+                  controller: provider.emailController,
+                  textInputType: TextInputType.emailAddress,
+                ),
+                CustomTextfeild(
+                  label: 'Password',
+                  controller: provider.passwordController,
+                  isHidden: true,
+                ),
+                CustomButton(title: 'Login', function: provider.loginUser),
+                CustomButton(
+                    title: 'Send Verification Code Again',
+                    function: provider.verifyEmail)
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

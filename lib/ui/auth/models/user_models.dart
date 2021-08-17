@@ -10,6 +10,7 @@ class UserModel {
   String phoneNumber;
   String city;
   String country;
+  String imageUrl;
   UserModel({
     @required this.email,
     @required this.password,
@@ -22,6 +23,7 @@ class UserModel {
   UserModel.fromMap(Map map) {
     this.id = map['id'];
     this.email = map['email'];
+    this.imageUrl = map['imageUrl'];
     this.userName = map['userName'];
     this.country = map['country'];
     this.city = map['city'];
@@ -33,6 +35,7 @@ class UserModel {
       'id': this.id,
       'email': this.email,
       'phone': this.phoneNumber,
+      'imageUrl': this.imageUrl,
       'userName': this.userName,
       'city': this.city,
       'country': this.country,

@@ -1,12 +1,20 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:maan1/ui/auth/data/auth_helper.dart';
+import 'package:maan1/ui/auth/data/firestorage_helper.dart';
 import 'package:maan1/ui/auth/data/firestore_helper.dart';
 import 'package:maan1/ui/auth/models/register_request.dart';
+import 'package:maan1/ui/auth/models/user_models.dart';
 import 'package:maan1/ui/auth/ui/register_page.dart';
+import 'package:maan1/ui/chat/ui/home_page.dart';
 import 'package:maan1/ui/helpers/route_helper.dart';
 
 class AuthProvider extends ChangeNotifier {
+  UserModel userModel;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
@@ -26,6 +34,9 @@ class AuthProvider extends ChangeNotifier {
   }
 
   GlobalKey<FormState> registerKey = GlobalKey<FormState>();
+  GlobalKey<FormState> loginKey = GlobalKey<FormState>();
+  TextStyle headingStyle = TextStyle(fontWeight: FontWeight.w700, fontSize: 25);
+  TextStyle bodyStyle = TextStyle(fontSize: 20, color: Colors.blue);
   registerNewUser() async {
     if (registerKey.currentState.validate()) {
       RegisterRequest registerRequest = RegisterRequest(
@@ -36,13 +47,46 @@ class AuthProvider extends ChangeNotifier {
           password: passwordController.text,
           gender: selectedGender,
           phoneNumber: phoneController.text);
+
       UserCredential userCredential = await signup(registerRequest);
+      registerRequest.id = userCredential.user.uid;
       setUserInFirestore(registerRequest);
-      await verifyEmail();
-      logout();
-      RouteHelper.routeHelper
-          .showCustomDialoug('please chech your email to verify your account');
+      // await verifyEmail();
+
+      // RouteHelper.routeHelper
+      //     .showCustomDialoug('please chech your email to verify your account');
     }
+  }
+
+  loginUser() async {
+    UserCredential userCredential = await login();
+    // if (userCredential.user.emailVerified) {
+    if (true) {
+      getUserFormFirestore(userCredential.user.uid);
+      RouteHelper.routeHelper.goAndReplacePage(HomePage.routeName);
+    } else {
+      verifyEmail();
+      RouteHelper.routeHelper.showCustomDialoug(
+          'sorry, you cant login because your email is not verified');
+    }
+  }
+
+  File file;
+  setFile(File file) {
+    this.file = file;
+    notifyListeners();
+  }
+
+  updateUserImage() async {
+    XFile file = await ImagePicker().pickImage(source: ImageSource.gallery);
+    this.file = File(file.path);
+
+    // upload image to firestorage
+    String imageUrl =
+        await FireStorageHelper.fireStorageHelper.uploadImage(this.file);
+    userModel.imageUrl = imageUrl;
+    // update image in firestore
+    updateUser();
   }
 
   Future<UserCredential> signup(RegisterRequest registerRequest) async {
@@ -51,9 +95,10 @@ class AuthProvider extends ChangeNotifier {
     return userCredential;
   }
 
-  login(String email, String password) async {
-    UserCredential userCredential =
-        await AuthHelper.authHelper.login(email, password);
+  Future<UserCredential> login() async {
+    UserCredential userCredential = await AuthHelper.authHelper
+        .login(emailController.text, passwordController.text);
+    return userCredential;
   }
 
   resetPassword(String email) async {
@@ -61,7 +106,8 @@ class AuthProvider extends ChangeNotifier {
   }
 
   verifyEmail() async {
-    AuthHelper.authHelper.verifyEmail();
+    await AuthHelper.authHelper.verifyEmail();
+    logout();
   }
 
   logout() async {
@@ -69,10 +115,18 @@ class AuthProvider extends ChangeNotifier {
   }
 
   getUserFormFirestore(String userId) async {
-    FirestoreHelper.firestoreHelper.getUserFromFirestore(userId);
+    this.userModel =
+        await FirestoreHelper.firestoreHelper.getUserFromFirestore(userId);
+    notifyListeners();
   }
 
   setUserInFirestore(RegisterRequest registerRequest) async {
+    print(registerRequest.toMap());
     FirestoreHelper.firestoreHelper.saveUserInFirestore(registerRequest);
+  }
+
+  updateUser() async {
+    await FirestoreHelper.firestoreHelper.updateUserFromFirestore(userModel);
+    getUserFormFirestore(userModel.id);
   }
 }
