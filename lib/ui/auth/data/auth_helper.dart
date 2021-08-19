@@ -44,7 +44,15 @@ class AuthHelper {
     firebaseAuth.currentUser.sendEmailVerification();
   }
 
-  logout() {
-    firebaseAuth.signOut();
+  logout() async {
+    await firebaseAuth.signOut();
+  }
+
+  bool checkUser() {
+    return firebaseAuth.currentUser != null;
+  }
+
+  String getUserId() {
+    return firebaseAuth.currentUser.uid;
   }
 }

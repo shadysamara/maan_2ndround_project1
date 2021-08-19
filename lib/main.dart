@@ -6,14 +6,24 @@ import 'package:maan1/ui/auth/models/register_request.dart';
 import 'package:maan1/ui/auth/providers/auth_provider.dart';
 import 'package:maan1/ui/auth/ui/auth_main_page.dart';
 import 'package:maan1/ui/auth/ui/register_page.dart';
+import 'package:maan1/ui/chat/providers/chat_provider.dart';
+import 'package:maan1/ui/chat/ui/edit_profile.dart';
 import 'package:maan1/ui/chat/ui/home_page.dart';
 import 'package:maan1/ui/helpers/route_helper.dart';
+import 'package:maan1/ui/splachScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
-void main() {
-  runApp(ChangeNotifierProvider<AuthProvider>(
-    create: (context) => AuthProvider(),
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider<AuthProvider>(
+        create: (context) => AuthProvider(),
+      ),
+      ChangeNotifierProvider<ChatProvider>(create: (context) => ChatProvider())
+    ],
     child: MaterialApp(
       navigatorKey: RouteHelper.routeHelper.navigationKey,
       builder: (context, widget) => ResponsiveWrapper.builder(
@@ -29,7 +39,9 @@ void main() {
       ),
       routes: {
         HomePage.routeName: (context) => HomePage(),
-        AuthMainPage.routeName: (context) => AuthMainPage()
+        AuthMainPage.routeName: (context) => AuthMainPage(),
+        SplachScreen.routeName: (context) => SplachScreen(),
+        EditProfile.routeName: (context) => EditProfile()
       },
       home: MyApp(),
     ),
@@ -64,7 +76,7 @@ class _AppState extends State<MyApp> {
 
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
-          return AuthMainPage();
+          return SplachScreen();
         }
 
         // Otherwise, show something whilst waiting for initialization to complete
