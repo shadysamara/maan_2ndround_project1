@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:maan1/ui/auth/models/user_models.dart';
 import 'package:maan1/ui/chat/models/message_model.dart';
 
@@ -23,6 +24,6 @@ class ChatFirestoreHelper {
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getChatStream() {
-    return firestore.collection('Chats').snapshots();
+    return firestore.collection('Chats').orderBy('createdOn').snapshots();
   }
 }

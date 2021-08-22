@@ -40,32 +40,52 @@ class ChatPage extends StatelessWidget {
                             alignment: Alignment.topRight,
                             margin: EdgeInsets.only(top: 20),
                             backGroundColor: Colors.blue,
-                            child: Container(
-                              constraints: BoxConstraints(
-                                maxWidth:
-                                    MediaQuery.of(context).size.width * 0.7,
-                              ),
-                              child: Text(
-                                e.content,
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
+                            child: e.imageUrl == null
+                                ? Container(
+                                    constraints: BoxConstraints(
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width *
+                                              0.7,
+                                    ),
+                                    child: Text(
+                                      e.content,
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  )
+                                : Container(
+                                    height: 200,
+                                    width: 200,
+                                    child: Image.network(
+                                      e.imageUrl,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                           )
                         : ChatBubble(
                             clipper: ChatBubbleClipper1(
                                 type: BubbleType.receiverBubble),
                             backGroundColor: Color(0xffE7E7ED),
                             margin: EdgeInsets.only(top: 20),
-                            child: Container(
-                              constraints: BoxConstraints(
-                                maxWidth:
-                                    MediaQuery.of(context).size.width * 0.7,
-                              ),
-                              child: Text(
-                                e.content,
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            ),
+                            child: e.imageUrl == null
+                                ? Container(
+                                    constraints: BoxConstraints(
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width *
+                                              0.7,
+                                    ),
+                                    child: Text(
+                                      e.content,
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                  )
+                                : Container(
+                                    height: 200,
+                                    width: 200,
+                                    child: Image.network(
+                                      e.imageUrl,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                           );
                   }).toList();
 
@@ -86,6 +106,12 @@ class ChatPage extends StatelessWidget {
           margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           child: Row(
             children: [
+              IconButton(
+                  onPressed: () {
+                    Provider.of<ChatProvider>(context, listen: false)
+                        .selectFile();
+                  },
+                  icon: Icon(Icons.attach_file)),
               Expanded(
                 child: TextField(
                   controller:

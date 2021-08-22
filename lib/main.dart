@@ -9,6 +9,7 @@ import 'package:maan1/ui/auth/ui/register_page.dart';
 import 'package:maan1/ui/chat/providers/chat_provider.dart';
 import 'package:maan1/ui/chat/ui/edit_profile.dart';
 import 'package:maan1/ui/chat/ui/home_page.dart';
+import 'package:maan1/ui/chat/ui/package_chat_page.dart';
 import 'package:maan1/ui/helpers/route_helper.dart';
 import 'package:maan1/ui/splachScreen.dart';
 import 'package:provider/provider.dart';
